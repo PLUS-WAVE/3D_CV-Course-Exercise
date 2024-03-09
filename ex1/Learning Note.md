@@ -3,7 +3,7 @@
 要完成 `get_face_color` 功能，需要根据给定的法向量和点光源方向，使用渲染方程计算光强度。渲染方程为：
 
 $$
-L_o(\mathbf{x}, \omega_o) = L_e(\mathbf{x}, \omega_o) + \int_{\Omega} f(\mathbf{x}, \omega_i, \omega_o) L_i(\mathbf{x}, \omega_i) (\mathbf{n} \cdot \omega_i) d\omega_i 
+L_o(\mathbf{x}, \omega_o) = L_e(\mathbf{x}, \omega_o) + \int_{\Omega} f(\mathbf{x}, \omega_i, \omega_o) L_i(\mathbf{x}, \omega_i) (\mathbf{n} \cdot \omega_i) d\omega_i
 $$
 
 但是，在该情况下，假设表面不发光 ($L_e(\mathbf{x}, \omega_o) = 0$) 并且 BRDF 项 ($f(\mathbf{x}, \omega_i, \omega_o)$) 始终为 1 ，因此，简化形式变为：
@@ -44,7 +44,7 @@ light_intensity = np.dot(normal, -point_light_direction)
 
 下面是DLT算法的基本原理：
 
-1. **构建投影方程：** 对于两个图像中的对应点 $(x, y, 1)$ 和 $(u, v, 1)$，投影关系可以用齐次坐标表示为 $c \begin{bmatrix} u \\ v \\ 1 \end{bmatrix} = H \begin{bmatrix} x \\ y \\ 1 \end{bmatrix}$。这里的 $H$（3*3矩阵）是我们要求解的单应性矩阵
+1. **构建投影方程：** 对于两个图像中的对应点 $(x, y, 1)$ 和 $(u, v, 1)$，投影关系可以用齐次坐标表示为 $c \begin{bmatrix} u \\ v \\ 1 \end{bmatrix} = H \begin{bmatrix} x \\ y \\ 1 \end{bmatrix}$。这里的 $H$（ $3 \times 3$ 矩阵）是我们要求解的单应性矩阵
    $$
    H =\begin{bmatrix}
    h1 & h2 & h3 \\
@@ -53,7 +53,6 @@ light_intensity = np.dot(normal, -point_light_direction)
    \end{bmatrix}
    $$
    
-
 2. **构建矩阵 $A$：** 将投影方程展开成 $Ah = 0$ 的形式，其中 $A$ 是一个 $2n \times 9$ 的矩阵，$h$ 是包含矩阵 $H$ 所有元素的列向量
    $$
    A = \begin{bmatrix}
@@ -73,7 +72,7 @@ light_intensity = np.dot(normal, -point_light_direction)
 
 3. **奇异值分解（SVD）：** 对矩阵 $A$ 进行奇异值分解，得到 $A = U \Sigma V^T$。取 $V^T$ 的最后一列作为 $h$​ 的估计
 
-   > <u>方程的最小二乘解有一个既定的结论，即对$A$进行SVD分解</u>，得到的 ==$V^T$的最后一行== 即是$h$的解，对$h$做 reshape 得到 $H$。
+   > <u>方程的最小二乘解有一个既定的结论，即对 $A$ 进行SVD分解</u>，得到的 ==$V^T$的最后一行== 即是 $h$ 的解，对 $h$ 做 reshape 得到 $H$。
 
 
 
