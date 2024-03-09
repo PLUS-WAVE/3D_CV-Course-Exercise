@@ -6,7 +6,7 @@ $$
 L_o(\mathbf{x}, \omega_o) = L_e(\mathbf{x}, \omega_o) + \int_{\Omega} f(\mathbf{x}, \omega_i, \omega_o) L_i(\mathbf{x}, \omega_i) (\mathbf{n} \cdot \omega_i) d\omega_i
 $$
 
-但是，在该情况下，假设表面不发光 ($L_e(\mathbf{x}, \omega_o) = 0$) 并且 BRDF 项 ($f(\mathbf{x}, \omega_i, \omega_o)$) 始终为 1 ，因此，简化形式变为：
+但是，在该情况下，假设表面不发光 ( $L_e(\mathbf{x}, \omega_o) = 0$ ) 并且 BRDF 项 ( $f(\mathbf{x}, \omega_i, \omega_o)$ ) 始终为 1 ，因此，简化形式变为：
 
 $$
 L_o(\mathbf{x}, \omega_o) = \int_{\Omega} L_i(\mathbf{x}, \omega_i) (\mathbf{n} \cdot \omega_i) d\omega_i
@@ -20,7 +20,7 @@ L_o(\mathbf{x}, \omega_o) = L_i(\mathbf{x}, \omega_i) (\mathbf{n} \cdot \omega_i
 $$
 
 
-$L_i(\mathbf{x}, \omega_i)$ 是入射光强度为 `1` ，$\omega_i$ 是光方向，代码实现：
+$L_i(\mathbf{x}, \omega_i)$ 是入射光强度为 `1` ， $\omega_i$ 是光方向，代码实现：
 
 ```python
 light_intensity = np.dot(normal, -point_light_direction)
