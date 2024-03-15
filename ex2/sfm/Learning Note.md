@@ -14,18 +14,28 @@ $$
 
  
 
-2. 线性系统：对于多对对应点，可以构建一个线性方程系统 $Af = 0$ ，其中 $A$ 是由对应点生成的矩阵，$f$​ 是基础矩阵的扁平形式
+2. 线性系统：对于多对对应点，可以构建一个线性方程系统 $Af = 0$ ，其中 $A$ 是由对应点生成的矩阵， $f$​ 是基础矩阵的扁平形式
 
    上述方程即：
    
 $$
-\begin{bmatrix} u & v & 1 \end{bmatrix} \cdot \begin{bmatrix} f_{11} & f_{12} & f_{13} \\ f_{21} & f_{22} & f_{23} \\ f_{31} & f_{32} & f_{33} \end{bmatrix} \cdot \begin{bmatrix} x \\ y \\ 1 \end{bmatrix} = 0
+\begin{bmatrix} u & v & 1 \end{bmatrix} \cdot \begin{bmatrix} f_{11} & f_{12} & f_{13} \\ f_{21} & f_{22} & f_{23} \\ f_{31} & f_{32} & f_{33} \end{bmatrix} \cdot \begin{bmatrix} x \\ 
+y \\ 
+1 \end{bmatrix} = 0
 $$
 
 ​	展开得到：
 
 $$
-\begin{bmatrix} ux&vx&x&uy&vy&y&u&v&1 \end{bmatrix}\cdot \begin{bmatrix}f_{11}\\f_{12}\\f_{13}\\f_{21}\\f_{22}\\f_{23}\\f_{31}\\f_{32}\\f_{33}\\\end{bmatrix} = 0
+\begin{bmatrix} ux&vx&x&uy&vy&y&u&v&1 \end{bmatrix}\cdot \begin{bmatrix}f_{11} \\
+f_{12} \\ 
+f_{13} \\ 
+f_{21} \\ 
+f_{22} \\ 
+f_{23} \\ 
+f_{31} \\ 
+f_{32} \\
+f_{33} \\ \end{bmatrix} = 0
 $$
 
 ​	这个矩阵方程可以表示为 $A_if = 0$​ 
@@ -33,7 +43,10 @@ $$
 ​	为了解出这个9个未知数的 $f$ ，我们至少需要**8对点**，所以叠加 $A_i$ 得到 $A$ 矩阵
 
 $$
-A = \begin{bmatrix} x_1u_1 & x_1v_1 & x_1 & y_1u_1 & y_1v_1 & y_1 & u_1 & v_1 & 1 \\ x_2u_2 & x_2v_2 & x_2 & y_2u_2 & y_2v_2 & y_2 & u_2 & v_2 & 1 \\ \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\ x_8u_8 & x_8v_8 & x_8 & y_8u_8 & y_8v_8 & y_8 & u_8 & v_8 & 1 \end{bmatrix}
+A = \begin{bmatrix} x_1u_1 & x_1v_1 & x_1 & y_1u_1 & y_1v_1 & y_1 & u_1 & v_1 & 1 \\
+x_2u_2 & x_2v_2 & x_2 & y_2u_2 & y_2v_2 & y_2 & u_2 & v_2 & 1 \\
+\vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+x_8u_8 & x_8v_8 & x_8 & y_8u_8 & y_8v_8 & y_8 & u_8 & v_8 & 1 \end{bmatrix}
 $$
 
 
@@ -72,7 +85,7 @@ $$
 对普通的八点算法进行了改进，通过标准化输入数据，提高了算法的稳健性和准确性
 
 1. 我们首先将对应点标准化为零均值和单位方差，以消除尺度的影响
-	   ```python
+   ```python
    mean1 = np.mean(keypoints1, axis=0)
    mean2 = np.mean(keypoints2, axis=0)
    std1 = np.std(keypoints1, axis=0)
@@ -94,7 +107,9 @@ $$
 
 
 $$
-T = \begin{bmatrix} \frac{1}{\sigma_x} & 0 & -\frac{\mu_x}{\sigma_x} \\ 0 & \frac{1}{\sigma_y} & -\frac{\mu_y}{\sigma_y} \\ 0 & 0 & 1 \end{bmatrix}
+T = \begin{bmatrix} \frac{1}{\sigma_x} & 0 & -\frac{\mu_x}{\sigma_x} \\
+0 & \frac{1}{\sigma_y} & -\frac{\mu_y}{\sigma_y} \\ 
+0 & 0 & 1 \end{bmatrix}
 $$
 
 
@@ -128,30 +143,58 @@ $$
  将 $P$ 分解为三个向量：
 
 $$
-P_i =\begin{bmatrix}P_{i1}\\ P_{i2}\\P_{i3}\end{bmatrix}\\
+\displaylines{
+P_i =\begin{bmatrix}P_{i1}\\ 
+P_{i2} \\
+P_{i3}
+\end{bmatrix} \\
 P_{i1} = [p_{11}, p_{12}, p_{13}, p_{14}] \\
 P_{i2} = [p_{21}, p_{22}, p_{23}, p_{24}] \\
 P_{i3} = [p_{31}, p_{32}, p_{33}, p_{34}] \\
+}
 $$
 
 这样，原等式就变为：
 
 $$
-\begin{bmatrix}P_{i1}\tilde X\\ P_{i2}\tilde X\\P_{i3}\tilde X\end{bmatrix}=\begin{bmatrix}x_i\\y_i\\1\end{bmatrix}
+\begin{bmatrix}P_{i1}\tilde X \\
+P_{i2}\tilde X \\
+P_{i3}\tilde X\end{bmatrix}
+=\begin{bmatrix}x_i \\
+y_i \\
+1\end{bmatrix}
 $$
 
 将左边向量齐次化除以第三个元素，与右边向量元素一一对应：
 
 $$
-P_i \tilde X =\begin{bmatrix}\frac{P_{i1}\tilde X}{P_{i3}\tilde X}\\ \frac{P_{i2}\tilde X}{P_{i3}\tilde X}\\1\end{bmatrix}=\begin{bmatrix}x_i\\y_i\\1\end{bmatrix}=\tilde x_i\\
-x_i = \frac{P_{i1}\tilde X}{P_{i3}\tilde X} \Rightarrow x_iP_{i3}\tilde X-P_{i1}\tilde X = 0\\
-y_i = \frac{P_{i2}\tilde X}{P_{i3}\tilde X} \Rightarrow y_iP_{i3}\tilde X-P_{i2}\tilde X = 0
+\displaylines{
+P_i \tilde X = \begin{bmatrix} \frac{P_{i1} \tilde X}{P_{i3}\tilde X} \\ 
+\frac{P_{i2} \tilde X}{P_{i3} \tilde X} \\
+1 \end{bmatrix}= \begin{bmatrix}x_i \\
+y_i \\
+1 \end{bmatrix}
+= \tilde x_i \\
+x_i = \frac{P_{i1} \tilde X}{P_{i3} \tilde X} \Rightarrow x_iP_{i3} \tilde X-P_{i1} \tilde X = 0 \\
+y_i = \frac{P_{i2} \tilde X}{P_{i3} \tilde X} \Rightarrow y_iP_{i3} \tilde X-P_{i2} \tilde X = 0
+}
 $$
 
-由于我们知道 $x_1$ 、$x_2$ 和 $P_1$ 、$P_2$​​ ，我们可以将其转化为一个**齐次线性方程组**：
+由于我们知道 $x_1$ 、 $x_2$ 和 $P_1$ 、 $P_2$​​ ，我们可以将其转化为一个**齐次线性方程组**：
 
 $$
-A_1 = \begin{bmatrix} {x}_1 P_{13} - P_{11} \\ {y}_1 P_{13} - P_{12} \end{bmatrix}\\A_2 = \begin{bmatrix} {x}_2 P_{23} - P_{21} \\ {y}_2 P_{23} - P_{22} \end{bmatrix}\\  A = \begin{bmatrix}A_1 \\A_2 \end{bmatrix} \\ A\tilde X = 0
+\displaylines{
+A_1 = \begin{bmatrix} x_1 P_{13} - P_{11} \\ 
+	y_1 P_{13} - P_{12} \end{bmatrix} 
+\\
+A_2 = \begin{bmatrix} x_2 P_{23} - P_{21} \\ 
+	y_2 P_{23} - P_{22} \end{bmatrix}
+\\
+A = \begin{bmatrix}A_1 \\
+	A_2 \end{bmatrix} 
+\\ 
+A\tilde X = 0
+}
 $$
 
 ```python
