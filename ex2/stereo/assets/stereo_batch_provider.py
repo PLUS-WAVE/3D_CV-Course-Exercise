@@ -55,8 +55,8 @@ class KITTIDataset(object):
         img_r = rgb2gray(img_r)[..., np.newaxis]
 
         if self.downsample:
-            img_l = rescale(img_l, 0.5, mode='reflect', anti_aliasing=True, multichannel=True)
-            img_r = rescale(img_r, 0.5, mode='reflect', anti_aliasing=True, multichannel=True)
+            img_l = rescale(img_l, 0.5, mode='reflect', anti_aliasing=True, channel_axis=-1)
+            img_r = rescale(img_r, 0.5, mode='reflect', anti_aliasing=True, channel_axis=-1)
 
         if self.disparity_dir is not None:
             disp = imread(self._disp_images[i]).astype(np.float32) / 256.

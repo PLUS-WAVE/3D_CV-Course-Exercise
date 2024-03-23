@@ -437,7 +437,7 @@ def triangulate_point(keypoint1, keypoint2, K1, K2, R, t):
     '''
     P1 = assemble_projection_matrix(K1, np.eye(3), np.zeros((3, 1)))
     P2 = assemble_projection_matrix(K1, R, t)
-    print(keypoint1[0] * P1[2] - P1[0])
+    # print(keypoint1[0] * P1[2] - P1[0])
     A = np.array(
         [keypoint1[0] * P1[2] - P1[0],
          keypoint1[1] * P1[2] - P1[1],
