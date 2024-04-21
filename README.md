@@ -1,6 +1,6 @@
 ### 关于
 
-这是我自己在学习 Andreas Geiger 教授的 **《计算机视觉导论》** 课程（[课程链接](https://uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/informatik/lehrstuehle/autonomous-vision/lectures/computer-vision/)）的作业仓库
+这是我自己在学习的 **《计算机视觉导论》** 课程（[课程链接](https://uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/informatik/lehrstuehle/autonomous-vision/lectures/computer-vision/)）的作业仓库
 
 ### 注意
 
