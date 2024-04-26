@@ -15,27 +15,27 @@ $$
 L_{\text{out}} = \rho \cdot L_{\text{in}} \cdot n^\top s = R(n)
 $$
 
-- $ L_{\text{out}} $：表示出射光线
-- $ \rho $：表示该点的漫反射率
-- $ L_{\text{in}} $：表示入射光线
-- $ n $：表示表面法线
+-  $L_{\text{out}}$ ：表示出射光线
+-  $\rho$ ：表示该点的漫反射率
+-  $L_{\text{in}}$ ：表示入射光线
+-  $n$ ：表示表面法线
 
 #### 1.2 梯度空间表示法
 
 梯度空间表示法 Gradient Space Representation，使用梯度信息来表示物体表面的几何形状。
 
-<img src="https://raw.githubusercontent.com/PLUS-WAVE/blog-image/master/img/blog/2024-04-26/image-20240426204012566.png" alt="image-20240426204012566" style="zoom:50%;" />
+<img src="https://img-blog.csdnimg.cn/img_convert/3cb155cad55abef12e6d9ae0658becd0.png" alt="image-20240426204012566" style="zoom:50%;" />
 
-在梯度空间表示法中，给定光线 $ s $ 和观察到的反射率 $ R $，我们可以通过以下方式来计算法线 $ n $：
+在梯度空间表示法中，给定光线 $s$ 和观察到的反射率 $R$，我们可以通过以下方式来计算法线 $n$：
 
-1. 计算 $ n^\top s = \cos(\theta) $，得到 $ \theta $ —— 法线 $ n $ 与光线 $ s $ 之间的夹角
-2. 按照给定的角度 $ \theta $，从光线 $ s $ 开始，投影这个集合到 $ z = 1 $ 平面上，我们可以得到一个锥面曲线即**反射率曲线 Iso-Reflectance Contour**，它表示出了所有与 $ s $ 的夹角为 $ \theta $​ 的可能法线
+1. 计算 $n^\top s = \cos(\theta)$，得到 $\theta$ —— 法线 $n$ 与光线 $s$ 之间的夹角
+2. 按照给定的角度 $\theta$，从光线 $s$ 开始，投影这个集合到 $z = 1$ 平面上，我们可以得到一个锥面曲线即**反射率曲线 Iso-Reflectance Contour**，它表示出了所有与 $s$ 的夹角为 $\theta$ 的可能法线
 
 
 
-通过不同的反射率 $ R $ ，我们可以得到**反射率图**（Reflectance Map）：
+通过不同的反射率 $R$ ，我们可以得到**反射率图**（Reflectance Map）：
 
-<img src="https://raw.githubusercontent.com/PLUS-WAVE/blog-image/master/img/blog/2024-04-26/image-20240426204817978.png" alt="image-20240426204817978" style="zoom:50%;" />
+<img src="https://img-blog.csdnimg.cn/img_convert/c2c8365cca94388267c8e458bbb2469f.png" alt="image-20240426204817978" style="zoom:50%;" />
 
 因此，在梯度空间表示法中，我们可以通过结合反射率图和其他几何信息来有效地参数化法线，并利用这些信息来推断物体表面的形状和材质。
 
@@ -51,7 +51,7 @@ $$
 
 通过如下的反射率图可以看到，对于每个像素，我们必须要有3个反射率图才能确定一个真正的法线，所以，我们**至少要有从3个不同的方向来的光源**
 
-<img src="https://raw.githubusercontent.com/PLUS-WAVE/blog-image/master/img/blog/2024-04-26/image-20240426210653283.png" alt="image-20240426210653283" style="zoom:50%;" />
+<img src="https://img-blog.csdnimg.cn/img_convert/dfa5457225d574d13507bf9066b8e9d5.png" alt="image-20240426210653283" style="zoom:50%;" />
 
 > 但是要避免**共线光源**：当光度立体设置中使用的所有光源都是共线时（**位于同一直线或平面上**），所得的线性系统将变得秩亏。这使得不可能唯一地确定每个像素的表面法线。因此，光度立体无法提供准确的重建。
 
@@ -61,19 +61,19 @@ $$
 
 对于每个像素，利用 K 张图像中的光照信息，通过解光度立体方程组来估计法线和反射率：
 
-使用兰伯反射，并且入射光强度为 $ L_{\text{in}} = 1 $，那么图像的亮度 $ I $ 可以表示为：
+使用兰伯反射，并且入射光强度为 $L_{\text{in}} = 1$，那么图像的亮度 $I$ 可以表示为：
 
 $$
 I = L_{\text{out}} = \rho \cdot n^\top s = \rho \cdot s^\top n
 $$
 
-对于给定的三个观测（相同的 $ v $，不同的 $ s $），我们可以将其表示为矩阵形式如下：
+对于给定的三个观测（相同的 $v$，不同的 $s$），我们可以将其表示为矩阵形式如下：
 
 $$
 \begin{bmatrix} I_1 \\ I_2 \\ I_3 \end{bmatrix} = \begin{bmatrix} s_1^\top \\ s_2^\top \\ s_3^\top \end{bmatrix} \cdot \rho \cdot n
 $$
 
-其中，$ I_1, I_2, I_3 $ 分别是三个观测得到的图像亮度，$ s_1, s_2, s_3 $ 分别是对应的三个光源方向向量，$ \rho $ 是漫反射率，$ n $​ 是法线向量。
+其中，$I_1, I_2, I_3$ 分别是三个观测得到的图像亮度， $s_1, s_2, s_3$ 分别是对应的三个光源方向向量，$\rho$ 是漫反射率，$n$ 是法线向量。
 
 
 
@@ -83,9 +83,9 @@ $$
 \rho n = (S^\top S)^{-1}S^\top I
 $$
 
-其中，$ S $ 是包含所有光源方向 $ s_i $ 的矩阵，$ I $ 是包含对应图像亮度 $ I_i $ 的向量
+其中，$S$ 是包含所有光源方向 $s_i$ 的矩阵，$I$ 是包含对应图像亮度 $I_i$ 的向量
 
-得到 $ \rho n $ 后，可以通过 $ \rho = ||\rho n||_2 $ （ $n$ 是单位向量 ）来计算漫反射率 $\rho$ ， $n = \rho n / \rho$
+得到 $\rho n$ 后，可以通过 $\rho = ||\rho n||_2$ （ $n$ 是单位向量 ）来计算漫反射率 $\rho$ ， $n = \rho n / \rho$
 
 
 
