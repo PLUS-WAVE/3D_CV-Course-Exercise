@@ -11,6 +11,7 @@ L_o(\mathbf{x}, \omega_o) = L_e(\mathbf{x}, \omega_o) + \int_{\Omega} f(\mathbf{
 $$
 
 我们将其简化：
+
 $$
 L_{\text{out}} = \rho \cdot L_{\text{in}} \cdot n^\top s = R(n)
 $$
