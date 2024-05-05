@@ -314,11 +314,128 @@ def interpolate_crossing(loc_x1, sdf_val_at_x1, loc_x2, sdf_val_at_x2, thresh=0.
     if sdf_val_at_x1 == sdf_val_at_x2:
         crossing_location = (loc_x2 + loc_x1) / 2
     else:
-        # BEGIN REGION SOLUTION
-        # interpolate here
-        # END REGION SOLUTION
-        pass
+        crossing_location = loc_x1 + (thresh - sdf_val_at_x1) * (loc_x2 - loc_x1) / (sdf_val_at_x2 - sdf_val_at_x1)
+
     return crossing_location
+
+
+def get_map_box_corner_idx_to_coords_tuple(x_idx, y_idx, z_idx):
+    map_box_corner_idx_to_coords_tuple = {
+        0: (x_idx, y_idx, z_idx),
+        1: (x_idx, y_idx + 1, z_idx),
+        2: (x_idx + 1, y_idx + 1, z_idx),
+        3: (x_idx + 1, y_idx, z_idx),
+        4: (x_idx, y_idx, z_idx + 1),
+        5: (x_idx, y_idx + 1, z_idx + 1),
+        6: (x_idx + 1, y_idx + 1, z_idx + 1),
+        7: (x_idx + 1, y_idx, z_idx + 1),
+    }
+
+    assert len(map_box_corner_idx_to_coords_tuple) == 8, "you missed some cases or added too many"
+    return map_box_corner_idx_to_coords_tuple
+
+
+def marching_cubes(sdf_field, voxel_coords, thresh=0.0):
+    assert sdf_field.shape[:-1] == voxel_coords.shape[:-1]
+    triangle_vertices = []
+    for x_idx in range(sdf_field.shape[0] - 1):
+        for y_idx in range(sdf_field.shape[1] - 1):
+            for z_idx in range(sdf_field.shape[2] - 1):
+
+                map_box_corner_idx_to_coords_tuple = get_map_box_corner_idx_to_coords_tuple(x_idx, y_idx, z_idx)
+
+                # 256 possible cases -> we need to match the correct case
+                cube_lut_index = 0
+                if sdf_field[map_box_corner_idx_to_coords_tuple[0]] < thresh:
+                    cube_lut_index |= 1
+                if sdf_field[map_box_corner_idx_to_coords_tuple[1]] < thresh:
+                    cube_lut_index |= 2
+                if sdf_field[map_box_corner_idx_to_coords_tuple[2]] < thresh:
+                    cube_lut_index |= 4
+                if sdf_field[map_box_corner_idx_to_coords_tuple[3]] < thresh:
+                    cube_lut_index |= 8
+                if sdf_field[map_box_corner_idx_to_coords_tuple[4]] < thresh:
+                    cube_lut_index |= 16
+                if sdf_field[map_box_corner_idx_to_coords_tuple[5]] < thresh:
+                    cube_lut_index |= 32
+                if sdf_field[map_box_corner_idx_to_coords_tuple[6]] < thresh:
+                    cube_lut_index |= 64
+                if sdf_field[map_box_corner_idx_to_coords_tuple[7]] < thresh:
+                    cube_lut_index |= 128
+
+                for edge_tuple_1, edge_tuple_2, edge_tuple_3 in LUT_CUBE_IDX_TO_TRIANGLES_EDGE_IDXS[cube_lut_index]:
+                    vertices = []
+                    for edge in (edge_tuple_1, edge_tuple_2, edge_tuple_3):
+                        (
+                            edge_start_point,
+                            edge_end_point,
+                        ) = LUT_EDGE_IDX_TO_START_END_POINTS_IDXS[edge]
+
+                        start_point = voxel_coords[map_box_corner_idx_to_coords_tuple[edge_start_point]]
+                        end_point = voxel_coords[map_box_corner_idx_to_coords_tuple[edge_end_point]]
+
+                        vertex = interpolate_crossing(
+                            start_point,
+                            sdf_field[map_box_corner_idx_to_coords_tuple[edge_start_point]],
+                            end_point,
+                            sdf_field[map_box_corner_idx_to_coords_tuple[edge_end_point]],
+                            thresh,
+                        )
+                        vertices.append(vertex)
+                    triangle_vertices.append(vertices)
+    triangle_vertices = np.array(triangle_vertices)
+
+    return triangle_vertices.astype(np.float32)
+
+
+def plot_mesh_colab(tri_vertices):
+    faces = []
+    triangle_vertices = tri_vertices.reshape((-1, 3))
+    for i, t in enumerate(tri_vertices):
+        faces.append([i * 3, i * 3 + 2, i * 3 + 1])
+
+    mymesh = Trimesh(triangle_vertices, faces)
+
+    mymesh.show(smooth=False)
+
+
+def random_points_on_sphere(radius, num_points, center=np.array([0.0, 0.0, 0.0])):
+    points = np.random.randn(num_points, 3)
+    points /= np.linalg.norm(points, axis=-1, keepdims=True)
+    points *= radius
+    points += center
+
+    assert points.shape == (num_points, 3)
+    return points
+
+
+def plot_points_colab(points):
+    fig = plt.figure()
+    ax = fig.add_subplot(projection='3d')
+
+    ax.scatter(points[::25, 0], points[::25, 1], points[::25, 2])
+
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+    scaling = np.array([getattr(ax, 'get_{}lim'.format(dim))() for dim in 'xyz'])
+    ax.auto_scale_xyz(*[[np.min(scaling), np.max(scaling)]] * 3)
+
+    plt.show()
+
+
+def chamfer_distance(pcl_0, pcl_1):
+    assert pcl_1.shape[-1] == 3
+    assert pcl_0.shape[-1] == 3
+
+    tree_0 = KDTree(pcl_0)
+    tree_1 = KDTree(pcl_1)
+    dist0, _ = tree_0.query(pcl_1)
+    dist1, _ = tree_1.query(pcl_0)
+    chamfer_dist = float(0.5 * (np.mean(dist0) + np.mean(dist1)))
+
+    assert type(chamfer_dist) == float
+    return chamfer_dist
 
 
 if __name__ == '__main__':
@@ -332,3 +449,52 @@ if __name__ == '__main__':
 
     voxel_coordinates = create_voxel_coords_grid(size_x, test_grid_size, size_y, size_z)
     sdf_vals = create_artificial_sphere_sdf(voxel_coordinates, radius)
+    triangle_vertices = marching_cubes(sdf_vals, voxel_coordinates, thresh=0.0)
+    # plot_mesh_colab(triangle_vertices)
+
+    gt_points = random_points_on_sphere(radius=radius, num_points=10000)
+
+    # if you run locally use this (nicer, interactive plot)
+    # plot_points_colab(gt_points)
+
+    metrics = defaultdict(list)
+    for grid_size in [8, 16, 32, 64, 128]:
+        print("Processing grid size: {0}...".format(grid_size))
+        voxel_coordinates = create_voxel_coords_grid(size_x, grid_size, size_y, size_z)
+
+        sdf_vals = create_artificial_sphere_sdf(voxel_coordinates, radius)
+
+        time_start = perf_counter()
+        triangle_vertices = marching_cubes(sdf_vals, voxel_coordinates)
+        runtime = perf_counter() - time_start
+        triangle_vertex_centers = np.mean(triangle_vertices, axis=-2)
+
+        metrics["Grid Size"].append(grid_size)
+        metrics["time"].append(runtime)
+        metrics["Chamfer Distance"].append(
+            chamfer_distance(gt_points, triangle_vertex_centers)
+        )
+    print("Done!")
+
+    fig, ax = plt.subplots()
+    ax.plot(
+        metrics["Grid Size"],
+        metrics["Chamfer Distance"],
+        label="Chamfer Distance",
+        color="red",
+    )
+    ax.set_xlabel("Grid Size")
+    ax.set_ylabel("Chamfer Distance [m]", color="red")
+    plt.legend()
+    ax2 = ax.twinx()
+    ax2.plot(
+        metrics["Grid Size"],
+        metrics["time"],
+        label="Execution time",
+        color="blue",
+        marker="o",
+    )
+    ax2.set_ylabel("Execution time [s]", color="blue")
+    plt.legend()
+    plt.show()
+    print("Success!")
