@@ -10,5 +10,5 @@
 2. [SfM Learning Note](https://github.com/PLUS-WAVE/3D_CV-Course-Exercise/blob/main/ex2/sfm/Learning%20Note.md)
 3. [stereo Learning Note](https://github.com/PLUS-WAVE/3D_CV-Course-Exercise/blob/main/ex2/stereo/Learning%20Note.md)
 4. [Probabilistic Graphical Models Learning Note](https://github.com/PLUS-WAVE/3D_CV-Course-Exercise/blob/main/ex3/Note.md)
-5. [Photometric Stereo Note](https://github.com/PLUS-WAVE/3D_CV-Course-Exercise/edit/main/ex4/Note.md)
+5. [Photometric Stereo & Marching Cubus Note](https://github.com/PLUS-WAVE/3D_CV-Course-Exercise/edit/main/ex4/Note.md)
 
