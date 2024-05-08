@@ -229,3 +229,5 @@ fabric.properties
 
 *.mp4
 /ex4/assets/data
+/ex5/data
+/ex5/output
